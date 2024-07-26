@@ -40,6 +40,7 @@ def data_thread():
         with lock:
             data += data_pin.read_u16()
     data_thread_running = False
+    print('closing second tread...')
 
 
 def main():
@@ -55,11 +56,17 @@ def main():
         button.update()
         led.update()
         with lock:
+            data_max, data_avg = data.max, data.avg
+            data.reset()
+            pot_value = pot.read_u16()
             if button.clicked:
                 settings.update_mode()
-            data_max, data_avg = data.max, data.avg
-            pot_value = pot.read_u16()
-            data.reset()
+            elif button.double_clicked:
+                if settings.mode == MODE_CONFIG_SENSITIVITY:
+                    settings.sensitivity = MAX_SENSITIVITY * pot_value / 65535
+                elif settings.mode == MODE_CONFIG_BRIGHTNESS:
+                    settings.max_bright = MAX_BRIGHTNESS * pot_value / 65535
+
         np.update(data_max, data_avg, pot_value)
         np.write()
 
@@ -73,5 +80,6 @@ if __name__ == '__main__':
         with lock:
             running = False
     while data_thread_running:  # wait until second thread close
+        print('waiting for second tread...')
         time.sleep(0.1)
-
+    print('finish')

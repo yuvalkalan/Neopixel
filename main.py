@@ -58,13 +58,9 @@ def main():
             if button.clicked:
                 settings.update_mode()
             data_max, data_avg = data.max, data.avg
+            pot_value = pot.read_u16()
             data.reset()
-        if settings.mode == MODE_SOUND_BAR:
-            np.update_sound_bar(data_avg)
-        elif settings.mode == MODE_SOUND_ROUTE:
-            np.update_sound_route(data_max)
-        elif settings.mode == MODE_RANDOM_COLOR:
-            pass
+        np.update(data_max, data_avg, pot_value)
         np.write()
 
 

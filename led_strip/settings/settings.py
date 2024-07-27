@@ -1,14 +1,17 @@
 from .constants import *
 import ujson
 import os
+from typing import *
 
 
+# settings -------------------------------------------------------------------------------------------------------------
 SETTINGS_FILE = 'settings.json'
 SETTING_MAX_BRIGHT = 'max_bright'
 SETTING_SENSITIVITY = 'sensitivity'
+# ----------------------------------------------------------------------------------------------------------------------
 
 
-def file_exists(filename):
+def file_exists(filename) -> bool:
     try:
         os.stat(filename)
         return True
@@ -16,13 +19,13 @@ def file_exists(filename):
         return False
 
 
-def set_settings(max_bright, sensitivity):
+def set_settings(max_bright: int, sensitivity: float) -> None:
     with open(SETTINGS_FILE, 'w') as json_file:
         json_file.write(ujson.dumps({SETTING_MAX_BRIGHT: max_bright,
                                      SETTING_SENSITIVITY: sensitivity}))
 
 
-def get_settings():
+def get_settings() -> Tuple[int, float]:
     with open(SETTINGS_FILE, 'r') as json_file:
         data = ujson.loads(json_file.read())
     return data[SETTING_MAX_BRIGHT], data[SETTING_SENSITIVITY]

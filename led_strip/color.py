@@ -24,15 +24,21 @@ class Color:
         self._start_time = None
         self._gen()
 
-    def _gen(self):
+    def _gen(self) -> None:
+        """
+        this function replace the destination color
+        :return:
+        """
         current = self._color
         self._color = self._next_color
         self._next_color = random.choice([color for color in COLORS if color not in [current, self._color]])
         self._start_time = time.time_ns()
 
-    def get(self, duration):
+    def get(self, duration, max_bright):
         delta = (time.time_ns() - self._start_time) / 10 ** 9 / duration
         new_color = tuple([led_fade(self._color[i], self._next_color[i], delta) for i in range(len(self._color))])
         if new_color == self._next_color:
             self._gen()
-        return new_color
+        # real color after reduce brightness
+        real_color = tuple([int(v * max_bright / 255) for v in new_color])
+        return real_color

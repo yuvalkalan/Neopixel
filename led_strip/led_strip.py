@@ -24,7 +24,7 @@ class LEDStrip:
 
     def start(self):
         for i in range(LINE_LENGTH):
-            self._current_poses.append((-i, self._color.get(COLOR_DURATION)))
+            self._current_poses.append((-i, self._color.get(COLOR_DURATION, self._settings.max_bright)))
 
     def update(self, data_max: int, data_avg: int, pot_value: int):
         MODE_FUNCTION[self._settings.mode](self, data_max, data_avg, pot_value)
@@ -44,9 +44,10 @@ class LEDStrip:
                 self._np[pos] = color
 
     def update_random_colors(self, _data_max: int, _data_avg: int, _pot_value: int):
-        self.update_sound_route(2**32, 0, 0)   # use max value
+        self.update_sound_route(2**32, 0, 0)   # use max value, always triggered
 
     def update_config_brightness(self, _data_max: int, _data_avg: int, pot_value: int):
+        # set all pixel to be at the same color
         v = 255 * pot_value / 65535
         for i in range(NUM_OF_PIXELS):
             self._np[i] = (v, v, v)

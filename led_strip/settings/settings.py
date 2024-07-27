@@ -4,13 +4,6 @@ import os
 from typing import *
 
 
-# settings -------------------------------------------------------------------------------------------------------------
-SETTINGS_FILE = 'settings.json'
-SETTING_MAX_BRIGHT = 'max_bright'
-SETTING_SENSITIVITY = 'sensitivity'
-# ----------------------------------------------------------------------------------------------------------------------
-
-
 def file_exists(filename) -> bool:
     try:
         os.stat(filename)

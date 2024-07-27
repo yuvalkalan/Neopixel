@@ -65,7 +65,7 @@ def main():
                 if settings.mode == MODE_CONFIG_SENSITIVITY:
                     settings.sensitivity = MAX_SENSITIVITY * pot_value / 65535
                 elif settings.mode == MODE_CONFIG_BRIGHTNESS:
-                    settings.max_bright = MAX_BRIGHTNESS * pot_value / 65535
+                    settings.max_bright = int(MAX_BRIGHTNESS * pot_value / 65535)
             elif button.hold_down:
                 settings.reset()
 

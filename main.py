@@ -66,6 +66,8 @@ def main():
                     settings.sensitivity = MAX_SENSITIVITY * pot_value / 65535
                 elif settings.mode == MODE_CONFIG_BRIGHTNESS:
                     settings.max_bright = MAX_BRIGHTNESS * pot_value / 65535
+            elif button.hold_down:
+                settings.reset()
 
         np.update(data_max, data_avg, pot_value)
         np.write()
@@ -80,6 +82,6 @@ if __name__ == '__main__':
         with lock:
             running = False
     while data_thread_running:  # wait until second thread close
-        print('waiting for second tread...')
+        print('waiting for second thread...')
         time.sleep(0.1)
     print('finish')

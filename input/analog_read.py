@@ -21,4 +21,4 @@ class AnalogRead:
 
     @property
     def avg(self):
-        return (self._sum + 0.001) / (self._counter + 0.001)
+        return (self._sum + 0.001) // (self._counter + 0.001)

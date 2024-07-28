@@ -1,9 +1,14 @@
+import time
+
 import machine
 import neopixel
 from .settings import Settings
 from .color import Color, BLACK
 from .constants import *
 from .settings.constants import *
+
+
+VOLUME_THRESHOLD_FREQ = 5
 
 
 class LEDStrip:
@@ -13,6 +18,7 @@ class LEDStrip:
         self._current_poses = []
         self._color = Color()
         self._settings = settings
+        self._time = time.time_ns()
 
     def write(self):
         self._np.write()
@@ -35,7 +41,7 @@ class LEDStrip:
             self._np[i] = (c, self._settings.max_bright - c, 0)
 
     def update_sound_route(self, data_max: int, _data_avg: int, _pot_value: int):
-        if data_max > self._settings.sensitivity:
+        if data_max > self._settings.volume_threshold:
             self.start()
         self._current_poses = [(pos + 1, color) for pos, color in self._current_poses if pos + 1 < self._size]
         for pos, color in self._current_poses:
@@ -57,11 +63,23 @@ class LEDStrip:
             c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
             self._np[i] = (c, self._settings.max_bright - c, 0)
 
-    def update_config_volume_thresh(self, data_max: int, data_avg: int, pot_value: int):
-        self.update_config_sensitivity(data_max, data_avg, pot_value)
+    def update_config_volume_thresh(self, _data_max: int, _data_avg: int, pot_value: int):
+        freq = pot_value / 65535 * VOLUME_THRESHOLD_FREQ
+        current_time = time.time_ns()
+        delta_time = (self._time - current_time) / 10**9
+        if 1/freq > delta_time:
+            self.start()
+            self._time = current_time
+        self._current_poses = [(pos + 1, color) for pos, color in self._current_poses if pos + 1 < self._size]
+        for pos, color in self._current_poses:
+            if pos >= 0:
+                self._np[pos] = color
 
     def update_off(self, _data_max: int, _data_avg: int, _pot_value: int):
         pass
+
+    def reset(self):
+        self._current_poses = []
 
 
 MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,

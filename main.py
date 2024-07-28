@@ -58,11 +58,14 @@ def main():
             pot_value = pot.read_u16()
             if button.clicked:
                 settings.update_mode()
+                np.reset()
             elif button.double_clicked:
                 if settings.mode == MODE_CONFIG_SENSITIVITY:
                     settings.sensitivity = MAX_SENSITIVITY * pot_value / 65535
+                    settings.update_mode()
                 elif settings.mode == MODE_CONFIG_BRIGHTNESS:
                     settings.max_bright = int(MAX_BRIGHTNESS * pot_value / 65535)
+                    settings.update_mode()
             elif button.hold_down:
                 settings.reset()
 

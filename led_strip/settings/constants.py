@@ -14,14 +14,18 @@ MODES = [MODE_SOUND_BAR,
 # ----------------------------------------------------------------------------------------------------------------------
 
 # default values -------------------------------------------------------------------------------------------------------
-DEFAULT_MAX_BRIGHT = 20
-DEFAULT_SENSITIVITY = 4
+DEF_MAX_BRIGHT = 20
+DEF_SENSITIVITY = 4
+DEF_VOLUME_THRESHOLD = 8000
+
 MAX_SENSITIVITY = 20
 MAX_BRIGHTNESS = 255
+MAX_VOLUME_THRESHOLD = 65535
 # ----------------------------------------------------------------------------------------------------------------------
 
 # settings json file ---------------------------------------------------------------------------------------------------
 SETTINGS_FILE = 'settings.json'
 SETTING_MAX_BRIGHT = 'max_bright'
 SETTING_SENSITIVITY = 'sensitivity'
+SETTING_VOLUME_THRESHOLD = 'volume_threshold'
 # ----------------------------------------------------------------------------------------------------------------------

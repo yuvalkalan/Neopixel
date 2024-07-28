@@ -68,6 +68,7 @@ def main():
                     settings.update_mode()
             elif button.hold_down:
                 settings.reset()
+                print('hold down')
 
         np.update(data_max, data_avg, pot_value)
         np.write()

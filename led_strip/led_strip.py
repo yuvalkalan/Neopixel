@@ -7,7 +7,6 @@ from .color import Color, BLACK
 from .constants import *
 from .settings.constants import *
 
-
 VOLUME_THRESHOLD_FREQ = 5
 
 
@@ -19,6 +18,7 @@ class LEDStrip:
         self._color = Color()
         self._settings = settings
         self._time = time.time_ns()
+        self._counter = 1
 
     def write(self):
         self._np.write()
@@ -64,12 +64,12 @@ class LEDStrip:
             self._np[i] = (c, self._settings.max_bright - c, 0)
 
     def update_config_volume_thresh(self, _data_max: int, _data_avg: int, pot_value: int):
-        freq = pot_value / 65535 * VOLUME_THRESHOLD_FREQ
-        current_time = time.time_ns()
-        delta_time = (self._time - current_time) / 10**9
-        if 1/freq > delta_time:
+        freq = max(int(NUM_OF_PIXELS * (pot_value / 65535)), 1)  # counter / pixel
+        print(pot_value, freq, self._counter, self._counter // freq)
+        if self._counter // freq != 0:
             self.start()
-            self._time = current_time
+            self._counter -= freq
+        self._counter += 1
         self._current_poses = [(pos + 1, color) for pos, color in self._current_poses if pos + 1 < self._size]
         for pos, color in self._current_poses:
             if pos >= 0:

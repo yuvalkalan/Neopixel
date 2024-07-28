@@ -1,7 +1,6 @@
 from .constants import *
 import ujson
 import os
-from typing import *
 
 
 def file_exists(filename) -> bool:
@@ -18,7 +17,7 @@ def set_settings(max_bright: int, sensitivity: float) -> None:
                                      SETTING_SENSITIVITY: sensitivity}))
 
 
-def get_settings() -> Tuple[int, float]:
+def get_settings():
     with open(SETTINGS_FILE, 'r') as json_file:
         data = ujson.loads(json_file.read())
     return data[SETTING_MAX_BRIGHT], data[SETTING_SENSITIVITY]

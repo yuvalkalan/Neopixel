@@ -4,7 +4,6 @@ from .settings import Settings
 from .color import Color, BLACK
 from .constants import *
 from .settings.constants import *
-from typing import *
 
 
 class LEDStrip:
@@ -44,11 +43,11 @@ class LEDStrip:
                 self._np[pos] = color
 
     def update_random_colors(self, _data_max: int, _data_avg: int, _pot_value: int):
-        self.update_sound_route(2**32, 0, 0)   # use max value, always triggered
+        self.update_sound_route(2 ** 32, 0, 0)  # use max value, always triggered
 
     def update_config_brightness(self, _data_max: int, _data_avg: int, pot_value: int):
         # set all pixel to be at the same color
-        v = 255 * pot_value / 65535
+        v = 255 * pot_value // 65535
         for i in range(NUM_OF_PIXELS):
             self._np[i] = (v, v, v)
 
@@ -62,9 +61,9 @@ class LEDStrip:
         pass
 
 
-MODE_FUNCTION: Dict[int, Callable[int, int, int]] = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,
-                                                     MODE_SOUND_ROUTE: LEDStrip.update_sound_route,
-                                                     MODE_RANDOM_COLOR: LEDStrip.update_random_colors,
-                                                     MODE_CONFIG_BRIGHTNESS: LEDStrip.update_config_brightness,
-                                                     MODE_CONFIG_SENSITIVITY: LEDStrip.update_config_sensitivity,
-                                                     MODE_OFF: LEDStrip.update_off}
+MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,
+                 MODE_SOUND_ROUTE: LEDStrip.update_sound_route,
+                 MODE_RANDOM_COLOR: LEDStrip.update_random_colors,
+                 MODE_CONFIG_BRIGHTNESS: LEDStrip.update_config_brightness,
+                 MODE_CONFIG_SENSITIVITY: LEDStrip.update_config_sensitivity,
+                 MODE_OFF: LEDStrip.update_off}

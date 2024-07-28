@@ -57,6 +57,9 @@ class LEDStrip:
             c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
             self._np[i] = (c, self._settings.max_bright - c, 0)
 
+    def update_config_volume_thresh(self, data_max: int, data_avg: int, pot_value: int):
+        self.update_config_sensitivity(data_max, data_avg, pot_value)
+
     def update_off(self, _data_max: int, _data_avg: int, _pot_value: int):
         pass
 
@@ -66,4 +69,5 @@ MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,
                  MODE_RANDOM_COLOR: LEDStrip.update_random_colors,
                  MODE_CONFIG_BRIGHTNESS: LEDStrip.update_config_brightness,
                  MODE_CONFIG_SENSITIVITY: LEDStrip.update_config_sensitivity,
+                 MODE_CONFIG_VOLUME_THRESH: LEDStrip.update_config_volume_thresh,
                  MODE_OFF: LEDStrip.update_off}

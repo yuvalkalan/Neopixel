@@ -66,6 +66,9 @@ def main():
                 elif settings.mode == MODE_CONFIG_BRIGHTNESS:
                     settings.max_bright = int(MAX_BRIGHTNESS * pot_value / 65535)
                     settings.update_mode()
+                elif settings.mode == MODE_CONFIG_VOLUME_THRESH:
+                    settings.volume_threshold = int(MAX_VOLUME_THRESHOLD * pot_value / 65535)
+                    settings.update_mode()
             elif button.hold_down:
                 settings.reset()
                 print('hold down')

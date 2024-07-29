@@ -63,10 +63,6 @@ class Button:
         self._value = value
 
     @property
-    def is_changed(self):
-        return self._has_changed
-
-    @property
     def is_down(self):
         return self._value == 0
 

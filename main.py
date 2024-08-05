@@ -1,7 +1,7 @@
 import machine
 import _thread
 import time
-from input import Button, AnalogRead
+from input import Rotary, AnalogRead
 from led import LED
 from led_strip import LEDStrip, Settings
 from led_strip.settings.constants import *
@@ -11,6 +11,8 @@ from led_strip.constants import *
 NP_PIN = 0
 DATA_PIN = 28
 POT_PIN = 27
+CLK_PIN = 13
+DT_PIN = 14
 BUTTON_PIN = 15
 LED_PIN = 25
 
@@ -47,19 +49,19 @@ def main():
     np = LEDStrip(NP_PIN, NUM_OF_PIXELS, settings)
     led = LED(LED_PIN)
     pot = machine.ADC(machine.Pin(POT_PIN))
-    button = Button(BUTTON_PIN)
+    rotary = Rotary(CLK_PIN, DT_PIN, BUTTON_PIN)
     while True:
         np.clear()
-        button.update()
+        rotary.update()
         led.update()
         with lock:
             data_max, data_avg = data.max, data.avg
             data.reset()
             pot_value = pot.read_u16()
-            if button.clicked:
+            if rotary.clicked:
                 settings.update_mode()
                 np.reset()
-            elif button.double_clicked:
+            elif rotary.double_clicked:
                 if settings.mode == MODE_CONFIG_SENSITIVITY:
                     settings.sensitivity = MAX_SENSITIVITY * pot_value / 65535
                     settings.update_mode()
@@ -69,7 +71,7 @@ def main():
                 elif settings.mode == MODE_CONFIG_VOLUME_THRESH:
                     settings.volume_threshold = int(MAX_VOLUME_THRESHOLD * pot_value / 65535)
                     settings.update_mode()
-            elif button.hold_down:
+            elif rotary.hold_down:
                 settings.reset()
                 print('hold down')
 

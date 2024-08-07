@@ -1,4 +1,5 @@
 from .button import Button
+import machine
 
 
 class Rotary:
@@ -9,8 +10,10 @@ class Rotary:
         self._direction = 0
         self._y = Button(pin_y)
 
-    def update(self):
+    def update_button(self):
         self._y.update()
+
+    def update(self):
         clk_state = self._clk.value()
         dt_state = self._dt.value()
         if clk_state != self._clk_last_value and self._clk_last_value:

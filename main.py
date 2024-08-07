@@ -23,6 +23,7 @@ CLOCK_SPEED = 133_000_000
 # shared data between threads ------------------------------------------------------------------------------------------
 running = True
 lock = _thread.allocate_lock()
+rotary = Rotary(CLK_PIN, DT_PIN, BUTTON_PIN)
 data = AnalogRead()
 data_thread_running = False
 # ----------------------------------------------------------------------------------------------------------------------
@@ -38,6 +39,7 @@ def data_thread():
     while running:
         with lock:
             data += data_pin.read_u16()
+            rotary.update()
     data_thread_running = False
     print('closing second tread...')
 
@@ -49,11 +51,10 @@ def main():
     np = LEDStrip(NP_PIN, NUM_OF_PIXELS, settings)
     led = LED(LED_PIN)
     pot = machine.ADC(machine.Pin(POT_PIN))
-    rotary = Rotary(CLK_PIN, DT_PIN, BUTTON_PIN)
     while True:
         np.clear()
-        rotary.update()
         led.update()
+        rotary.update_button()
         with lock:
             data_max, data_avg = data.max, data.avg
             data.reset()
@@ -73,7 +74,7 @@ def main():
                     settings.update_mode()
             elif rotary.hold_down:
                 settings.reset()
-                print('hold down')
+                print('reset')
 
         np.update(data_max, data_avg, pot_value)
         np.write()

@@ -35,11 +35,28 @@ class Settings:
         self._max_bright = max_bright
         self._sensitivity = sensitivity
         self._volume_threshold = volume_threshold
+        self._config_temp_value = 0
 
     def update_mode(self):
         new_index = (MODES.index(self._mode) + 1) % len(MODES)
         self._mode = MODES[new_index]
+        if self.mode == MODE_CONFIG_SENSITIVITY:
+            self._config_temp_value = self._sensitivity
+        elif self.mode == MODE_CONFIG_BRIGHTNESS:
+            self._config_temp_value = self._max_bright
+        elif self.mode == MODE_CONFIG_VOLUME_THRESH:
+            self._config_temp_value = self._volume_threshold
+        else:
+            self._config_temp_value = 0
         print(f'new mode is {self._mode}')
+
+    @property
+    def config_temp_value(self):
+        return self._config_temp_value
+
+    @config_temp_value.setter
+    def config_temp_value(self, value):
+        self._config_temp_value = max(0, min(value, 100))
 
     def reset(self):
         if file_exists(SETTINGS_FILE):

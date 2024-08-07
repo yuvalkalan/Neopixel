@@ -18,16 +18,16 @@ class Rotary:
         dt_state = self._dt.value()
         if clk_state != self._clk_last_value and self._clk_last_value:
             if dt_state != clk_state:
-                self._spin = 1
+                self._spin += 1
             else:
-                self._spin = -1
-        else:
-            self._spin = 0
+                self._spin -= 1
         self._clk_last_value = clk_state
 
     @property
     def spin(self):
-        return self._spin
+        v = self._spin
+        self._spin = 0
+        return v
 
     @property
     def is_down(self):

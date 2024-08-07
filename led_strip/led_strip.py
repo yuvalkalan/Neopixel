@@ -53,18 +53,20 @@ class LEDStrip:
 
     def update_config_brightness(self, _data_max: int, _data_avg: int, rotary_value: int):
         # set all pixel to be at the same color
-        v = 255 * rotary_value // 65535
+        v = int(255 * rotary_value / 100)
+        print(rotary_value, v)
+
         for i in range(NUM_OF_PIXELS):
             self._np[i] = (v, v, v)
 
     def update_config_sensitivity(self, _data_max: int, _data_avg: int, rotary_value: int):
-        v = NUM_OF_PIXELS * rotary_value / 65535
+        v = NUM_OF_PIXELS * rotary_value / 100
         for i in range(int(v)):
             c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
             self._np[i] = (c, self._settings.max_bright - c, 0)
 
     def update_config_volume_thresh(self, _data_max: int, _data_avg: int, rotary_value: int):
-        freq = max(int(NUM_OF_PIXELS * (rotary_value / 65535)), 1)  # counter / pixel
+        freq = max(int(NUM_OF_PIXELS * (rotary_value / 100)), 1)  # counter / pixel
         print(rotary_value, freq, self._counter, self._counter // freq)
         if self._counter // freq != 0:
             self.start()
@@ -89,3 +91,4 @@ MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,
                  MODE_CONFIG_SENSITIVITY: LEDStrip.update_config_sensitivity,
                  MODE_CONFIG_VOLUME_THRESH: LEDStrip.update_config_volume_thresh,
                  MODE_OFF: LEDStrip.update_off}
+

@@ -54,6 +54,8 @@ def main():
         np.clear()
         led.update()
         rotary.update_button()
+        spin = rotary.spin
+        settings.config_temp_value += spin
         with lock:
             data_max, data_avg = data.max, data.avg
             data.reset()
@@ -62,19 +64,18 @@ def main():
                 np.reset()
             elif rotary.double_clicked:
                 if settings.mode == MODE_CONFIG_SENSITIVITY:
-                    settings.sensitivity_percent += rotary.spin
+                    settings.sensitivity_percent = settings.config_temp_value
                     settings.update_mode()
                 elif settings.mode == MODE_CONFIG_BRIGHTNESS:
-                    settings.max_bright_percent += rotary.spin
+                    settings.max_bright_percent = settings.config_temp_value
                     settings.update_mode()
                 elif settings.mode == MODE_CONFIG_VOLUME_THRESH:
-                    settings.volume_threshold_percent += rotary.spin
+                    settings.volume_threshold_percent = settings.config_temp_value
                     settings.update_mode()
             elif rotary.hold_down:
                 settings.reset()
                 print('reset')
-
-        np.update(data_max, data_avg, settings.current_mode_value)
+        np.update(data_max, data_avg, settings.config_temp_value)
         np.write()
 
 

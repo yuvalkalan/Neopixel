@@ -53,30 +53,50 @@ class Settings:
         return self._mode
 
     @property
-    def max_bright(self):
+    def max_bright_percent(self):
         return self._max_bright
 
-    @max_bright.setter
-    def max_bright(self, value):
+    @max_bright_percent.setter
+    def max_bright_percent(self, value):
         self._max_bright = value
         set_settings(self._max_bright, self._sensitivity, self._volume_threshold)
 
     @property
-    def sensitivity(self):
+    def sensitivity_percent(self):
         return self._sensitivity
 
-    @sensitivity.setter
-    def sensitivity(self, value):
+    @sensitivity_percent.setter
+    def sensitivity_percent(self, value):
         self._sensitivity = value
         set_settings(self._max_bright, self._sensitivity, self._volume_threshold)
 
     @property
-    def volume_threshold(self):
+    def volume_threshold_percent(self):
         return self._volume_threshold
 
-
-    @volume_threshold.setter
-    def volume_threshold(self, value):
+    @volume_threshold_percent.setter
+    def volume_threshold_percent(self, value):
         self._volume_threshold = value
         set_settings(self._max_bright, self._sensitivity, self._volume_threshold)
 
+    @property
+    def max_bright(self):
+        return self._max_bright / 100 * MAX_BRIGHTNESS
+
+    @property
+    def sensitivity(self):
+        return self._sensitivity / 100 * MAX_SENSITIVITY
+
+    @property
+    def volume_threshold(self):
+        return self._volume_threshold / 100 * MAX_VOLUME_THRESHOLD
+
+    @property
+    def current_mode_value(self):
+        if self._mode == MODE_CONFIG_BRIGHTNESS:
+            return self.max_bright
+        elif self._mode == MODE_CONFIG_SENSITIVITY:
+            return self.sensitivity
+        elif self._mode == MODE_CONFIG_VOLUME_THRESH:
+            return self.volume_threshold
+        return 0

@@ -50,7 +50,6 @@ def main():
     settings = Settings()
     np = LEDStrip(NP_PIN, NUM_OF_PIXELS, settings)
     led = LED(LED_PIN)
-    pot = machine.ADC(machine.Pin(POT_PIN))
     while True:
         np.clear()
         led.update()
@@ -58,25 +57,24 @@ def main():
         with lock:
             data_max, data_avg = data.max, data.avg
             data.reset()
-            pot_value = pot.read_u16()
             if rotary.clicked:
                 settings.update_mode()
                 np.reset()
             elif rotary.double_clicked:
                 if settings.mode == MODE_CONFIG_SENSITIVITY:
-                    settings.sensitivity = MAX_SENSITIVITY * pot_value / 65535
+                    settings.sensitivity_percent += rotary.spin
                     settings.update_mode()
                 elif settings.mode == MODE_CONFIG_BRIGHTNESS:
-                    settings.max_bright = int(MAX_BRIGHTNESS * pot_value / 65535)
+                    settings.max_bright_percent += rotary.spin
                     settings.update_mode()
                 elif settings.mode == MODE_CONFIG_VOLUME_THRESH:
-                    settings.volume_threshold = int(MAX_VOLUME_THRESHOLD * pot_value / 65535)
+                    settings.volume_threshold_percent += rotary.spin
                     settings.update_mode()
             elif rotary.hold_down:
                 settings.reset()
                 print('reset')
 
-        np.update(data_max, data_avg, pot_value)
+        np.update(data_max, data_avg, settings.current_mode_value)
         np.write()
 
 

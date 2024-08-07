@@ -7,7 +7,7 @@ class Rotary:
         self._clk = machine.Pin(pin_clk)
         self._dt = machine.Pin(pin_dt)
         self._clk_last_value = self._clk.value()
-        self._direction = 0
+        self._spin = 0
         self._y = Button(pin_y)
 
     def update_button(self):
@@ -18,16 +18,16 @@ class Rotary:
         dt_state = self._dt.value()
         if clk_state != self._clk_last_value and self._clk_last_value:
             if dt_state != clk_state:
-                self._direction = 1
+                self._spin = 1
             else:
-                self._direction = -1
+                self._spin = -1
         else:
-            self._direction = 0
+            self._spin = 0
         self._clk_last_value = clk_state
 
     @property
-    def direction(self):
-        return self._direction
+    def spin(self):
+        return self._spin
 
     @property
     def is_down(self):

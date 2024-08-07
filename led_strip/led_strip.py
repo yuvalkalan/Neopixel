@@ -31,8 +31,8 @@ class LEDStrip:
         for i in range(LINE_LENGTH):
             self._current_poses.append((-i, self._color.get(COLOR_DURATION, self._settings.max_bright)))
 
-    def update(self, data_max: int, data_avg: int, pot_value: int):
-        MODE_FUNCTION[self._settings.mode](self, data_max, data_avg, pot_value)
+    def update(self, data_max: int, data_avg: int, rotary_value: int):
+        MODE_FUNCTION[self._settings.mode](self, data_max, data_avg, rotary_value)
 
     def update_sound_bar(self, _data_max: int, data_avg: int, _pot_value: int):
         real_value = min(NUM_OF_PIXELS, int(self._settings.sensitivity * NUM_OF_PIXELS * data_avg / 65535))
@@ -51,21 +51,21 @@ class LEDStrip:
     def update_random_colors(self, _data_max: int, _data_avg: int, _pot_value: int):
         self.update_sound_route(2 ** 32, 0, 0)  # use max value, always triggered
 
-    def update_config_brightness(self, _data_max: int, _data_avg: int, pot_value: int):
+    def update_config_brightness(self, _data_max: int, _data_avg: int, rotary_value: int):
         # set all pixel to be at the same color
-        v = 255 * pot_value // 65535
+        v = 255 * rotary_value // 65535
         for i in range(NUM_OF_PIXELS):
             self._np[i] = (v, v, v)
 
-    def update_config_sensitivity(self, _data_max: int, _data_avg: int, pot_value: int):
-        v = NUM_OF_PIXELS * pot_value / 65535
+    def update_config_sensitivity(self, _data_max: int, _data_avg: int, rotary_value: int):
+        v = NUM_OF_PIXELS * rotary_value / 65535
         for i in range(int(v)):
             c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
             self._np[i] = (c, self._settings.max_bright - c, 0)
 
-    def update_config_volume_thresh(self, _data_max: int, _data_avg: int, pot_value: int):
-        freq = max(int(NUM_OF_PIXELS * (pot_value / 65535)), 1)  # counter / pixel
-        print(pot_value, freq, self._counter, self._counter // freq)
+    def update_config_volume_thresh(self, _data_max: int, _data_avg: int, rotary_value: int):
+        freq = max(int(NUM_OF_PIXELS * (rotary_value / 65535)), 1)  # counter / pixel
+        print(rotary_value, freq, self._counter, self._counter // freq)
         if self._counter // freq != 0:
             self.start()
             self._counter -= freq

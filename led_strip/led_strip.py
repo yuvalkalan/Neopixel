@@ -52,7 +52,7 @@ class LEDStrip:
         self.update_sound_route(2 ** 32, 0, 0)  # use max value, always triggered
 
     def update_config_brightness(self, _data_max: int, _data_avg: int, rotary_value: int):
-        # set all pixel to be at the same color
+        # set all pixels to be at the same color
         v = int(255 * rotary_value / 100)
         print(rotary_value, v)
 

@@ -81,15 +81,15 @@ class Settings:
 
     @property
     def max_bright(self):
-        return self._max_bright / 100 * MAX_BRIGHTNESS
+        return int(self._max_bright / 100 * MAX_BRIGHTNESS)
 
     @property
     def sensitivity(self):
-        return self._sensitivity / 100 * MAX_SENSITIVITY
+        return int(self._sensitivity / 100 * MAX_SENSITIVITY)
 
     @property
     def volume_threshold(self):
-        return self._volume_threshold / 100 * MAX_VOLUME_THRESHOLD
+        return int(self._volume_threshold / 100 * MAX_VOLUME_THRESHOLD)
 
     @property
     def current_mode_value(self):

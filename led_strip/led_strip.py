@@ -33,7 +33,7 @@ class LED:
 
     @property
     def alive(self):
-        return self._index <= NUM_OF_PIXELS / 2
+        return self._index < NUM_OF_PIXELS / 2
 
 
 class LEDStrip:

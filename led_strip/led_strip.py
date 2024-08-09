@@ -1,5 +1,4 @@
 import time
-
 import machine
 import neopixel
 from .settings import Settings
@@ -65,20 +64,23 @@ class LEDStrip:
     def update(self, r_data_max: int, r_data_avg: int, l_data_max: int, l_data_avg: int, rotary_value: int):
         MODE_FUNCTION[self._settings.mode](self, r_data_max, r_data_avg, l_data_max, l_data_avg, rotary_value)
 
-    def update_sound_bar(self, _r_data_max: int, r_data_avg: int, _l_data_max: int, _l_data_avg: int, _rotary_value: int):
+    def update_sound_bar(self, _r_data_max: int, r_data_avg: int, _l_data_max: int, _l_data_avg: int,
+                         _rotary_value: int):
         real_value = min(NUM_OF_PIXELS, int(self._settings.sensitivity * NUM_OF_PIXELS * r_data_avg / 65535))
         for i in range(real_value):
             c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
             self._np[i] = (c, self._settings.max_bright - c, 0)
 
-    def update_sound_route(self, r_data_max: int, _r_data_avg: int, l_data_max: int, _l_data_avg: int, _rotary_value: int):
+    def update_sound_route(self, r_data_max: int, _r_data_avg: int, l_data_max: int, _l_data_avg: int,
+                           _rotary_value: int):
         if r_data_max > self._settings.volume_threshold:
             self._start(True)
         if l_data_max > self._settings.volume_threshold:
             self._start(False)
         self._draw()
 
-    def update_random_colors(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int, _rotary_value: int):
+    def update_random_colors(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int,
+                             _rotary_value: int):
         self.update_sound_route(2 ** 32, 0, 2**32, 0, 0)  # use max value, always triggered
 
     def update_config_brightness(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int,
@@ -122,5 +124,3 @@ MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,
                  MODE_CONFIG_SENSITIVITY: LEDStrip.update_config_sensitivity,
                  MODE_CONFIG_VOLUME_THRESH: LEDStrip.update_config_volume_thresh,
                  MODE_OFF: LEDStrip.update_off}
-
-

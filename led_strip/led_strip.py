@@ -23,6 +23,7 @@ class LED:
 
     def update(self):
         self._index += 1
+        return self.alive
 
     @property
     def color(self):
@@ -72,7 +73,7 @@ class LEDStrip:
             self.start(True)
         if l_data_max > self._settings.volume_threshold:
             self.start(False)
-        self._current_leds = [led for led in self._current_leds if led.alive]
+        self._current_leds = [led for led in self._current_leds if led.update()]
         for led in self._current_leds:
             self._np[led.index] = led.color
 
@@ -122,4 +123,5 @@ MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,
                  MODE_CONFIG_SENSITIVITY: LEDStrip.update_config_sensitivity,
                  MODE_CONFIG_VOLUME_THRESH: LEDStrip.update_config_volume_thresh,
                  MODE_OFF: LEDStrip.update_off}
+
 

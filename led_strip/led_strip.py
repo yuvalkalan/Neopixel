@@ -55,9 +55,14 @@ class LEDStrip:
         for i in range(NUM_OF_PIXELS):
             self._np[i] = BLACK
 
-    def start(self, rtl):
+    def _start(self, rtl):
         color = self._color.get(COLOR_DURATION, self._settings.max_bright)
         self._current_leds.append(LED(color, rtl))
+
+    def _draw(self):
+        for led in self._current_leds:
+            self._np[led.index] = led.color
+        self._current_leds = [led for led in self._current_leds if led.update()]
 
     def update(self, r_data_max: int, r_data_avg: int, l_data_max: int, l_data_avg: int, rotary_value: int):
         MODE_FUNCTION[self._settings.mode](self, r_data_max, r_data_avg, l_data_max, l_data_avg, rotary_value)
@@ -70,12 +75,10 @@ class LEDStrip:
 
     def update_sound_route(self, r_data_max: int, _r_data_avg: int, l_data_max: int, _l_data_avg: int, _rotary_value: int):
         if r_data_max > self._settings.volume_threshold:
-            self.start(True)
+            self._start(True)
         if l_data_max > self._settings.volume_threshold:
-            self.start(False)
-        self._current_leds = [led for led in self._current_leds if led.update()]
-        for led in self._current_leds:
-            self._np[led.index] = led.color
+            self._start(False)
+        self._draw()
 
     def update_random_colors(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int, _rotary_value: int):
         self.update_sound_route(2 ** 32, 0, 2**32, 0, 0)  # use max value, always triggered
@@ -101,13 +104,11 @@ class LEDStrip:
         freq = max(int(NUM_OF_PIXELS * (rotary_value / 100)), 1)  # counter / pixel
         print(rotary_value, freq, self._counter, self._counter // freq)
         if self._counter // freq != 0:
-            self.start(True)
-            self.start(False)
+            self._start(True)
+            self._start(False)
             self._counter -= freq
         self._counter += 1
-        self._current_leds = [led for led in self._current_leds if led.update()]
-        for led in self._current_leds:
-            self._np[led.index] = led.color
+        self._draw()
 
     def update_off(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int, _rotary_value: int):
         pass

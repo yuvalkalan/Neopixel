@@ -7,8 +7,6 @@ from .color import Color, BLACK
 from .constants import *
 from .settings.constants import *
 
-VOLUME_THRESHOLD_FREQ = 5
-
 
 class LED:
     def __init__(self, color, rtl: bool):

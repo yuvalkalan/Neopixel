@@ -64,6 +64,7 @@ class Settings:
         self._max_bright = DEF_MAX_BRIGHT
         self._sensitivity = DEF_SENSITIVITY
         self._volume_threshold = DEF_VOLUME_THRESHOLD
+        print('reset settings')
 
     @property
     def mode(self):

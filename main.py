@@ -9,8 +9,8 @@ from led_strip.constants import *
 
 # gpio pins ------------------------------------------------------------------------------------------------------------
 NP_PIN = 0
-DATA_PIN = 28
-POT_PIN = 27
+R_DATA_PIN = 28
+L_DATA_PIN = 27
 CLK_PIN = 13
 DT_PIN = 14
 BUTTON_PIN = 15
@@ -24,28 +24,33 @@ CLOCK_SPEED = 133_000_000
 running = True
 lock = _thread.allocate_lock()
 rotary = Rotary(CLK_PIN, DT_PIN, BUTTON_PIN)
-data = AnalogRead()
+r_data = AnalogRead()
+l_data = AnalogRead()
 data_thread_running = False
 # ----------------------------------------------------------------------------------------------------------------------
 
 
 def data_thread():
-    global data
+    global r_data
+    global l_data
     global data_thread_running
 
     with lock:
         data_thread_running = True
-    data_pin = machine.ADC(machine.Pin(DATA_PIN))
+    r_data_pin = machine.ADC(machine.Pin(R_DATA_PIN))
+    l_data_pin = machine.ADC(machine.Pin(L_DATA_PIN))
     while running:
         with lock:
-            data += data_pin.read_u16()
+            r_data += r_data_pin.read_u16()
+            l_data += l_data_pin.read_u16()
             rotary.update()
     data_thread_running = False
     print('closing second tread...')
 
 
 def main():
-    global data
+    global r_data
+    global l_data
 
     settings = Settings()
     np = LEDStrip(NP_PIN, NUM_OF_PIXELS, settings)
@@ -57,8 +62,10 @@ def main():
         spin = rotary.spin
         settings.config_temp_value += spin
         with lock:
-            data_max, data_avg = data.max, data.avg
-            data.reset()
+            r_data_max, r_data_avg = r_data.max, r_data.avg
+            r_data.reset()
+            l_data_max, l_data_avg = l_data.max, l_data.avg
+            l_data.reset()
             if rotary.clicked:
                 settings.update_mode()
                 np.reset()
@@ -74,8 +81,7 @@ def main():
                     settings.update_mode()
             elif rotary.hold_down:
                 settings.reset()
-                print('reset')
-        np.update(data_max, data_avg, settings.config_temp_value)
+        np.update(r_data_max, r_data_avg, l_data_max, l_data_avg, settings.config_temp_value)
         np.write()
 
 

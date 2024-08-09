@@ -101,13 +101,13 @@ class LEDStrip:
         freq = max(int(NUM_OF_PIXELS * (rotary_value / 100)), 1)  # counter / pixel
         print(rotary_value, freq, self._counter, self._counter // freq)
         if self._counter // freq != 0:
-            self.start()
+            self.start(True)
+            self.start(False)
             self._counter -= freq
         self._counter += 1
-        self._current_leds = [(pos + 1, color) for pos, color in self._current_leds if pos + 1 < self._size]
-        for pos, color in self._current_leds:
-            if pos >= 0:
-                self._np[pos] = color
+        self._current_leds = [led for led in self._current_leds if led.update()]
+        for led in self._current_leds:
+            self._np[led.index] = led.color
 
     def update_off(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int, _rotary_value: int):
         pass

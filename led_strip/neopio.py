@@ -1,4 +1,5 @@
-from .color import Color, BLACK
+from .color import BLACK
+import machine
 from .constants import *
 import rp2
 
@@ -25,7 +26,7 @@ def neopio_asm():
 
 class NeoPio:
     def __init__(self, pin):
-        self._values = [BLACK] * NUM_OF_PIXELS
+        self._values = [to_bin(BLACK)] * NUM_OF_PIXELS
         self._sm = rp2.StateMachine(0, neopio_asm, freq=20_000_000, set_base=machine.Pin(pin))
         self._sm.active(1)
 
@@ -37,4 +38,10 @@ class NeoPio:
         self._sm.active(0)
 
     def __setitem__(self, key, value):
-        self._values[key] = value
+        self._values[key] = to_bin(value)
+
+
+def to_bin(color):
+    r, g, b = color
+    return (g << 16) + (r << 8) + (b << 0)  # color format is grb
+

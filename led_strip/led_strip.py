@@ -64,12 +64,19 @@ class LEDStrip:
     def update(self, r_data_max: int, r_data_avg: int, l_data_max: int, l_data_avg: int, rotary_value: int):
         MODE_FUNCTION[self._settings.mode](self, r_data_max, r_data_avg, l_data_max, l_data_avg, rotary_value)
 
-    def update_sound_bar(self, _r_data_max: int, r_data_avg: int, _l_data_max: int, _l_data_avg: int,
+    def update_sound_bar(self, _r_data_max: int, r_data_avg: int, _l_data_max: int, l_data_avg: int,
                          _rotary_value: int):
-        real_value = min(NUM_OF_PIXELS, int(self._settings.sensitivity * NUM_OF_PIXELS * r_data_avg / 65535))
-        for i in range(real_value):
-            c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
+        # right
+        right_value = min((NUM_OF_PIXELS//2), int(self._settings.sensitivity * (NUM_OF_PIXELS//2) * r_data_avg / 65535))
+        for i in range(right_value):
+            c = int(i * self._settings.max_bright / (NUM_OF_PIXELS//2))
             self._np[i] = (c, self._settings.max_bright - c, 0)
+        # left
+        left_value = min((NUM_OF_PIXELS//2), int(self._settings.sensitivity * (NUM_OF_PIXELS//2) * l_data_avg / 65535))
+        for i in range(left_value):
+            c = int(i * self._settings.max_bright / (NUM_OF_PIXELS//2))
+            self._np[NUM_OF_PIXELS - 1 - i] = (c, self._settings.max_bright - c, 0)
+        print(left_value, right_value)
 
     def update_sound_route(self, r_data_max: int, _r_data_avg: int, l_data_max: int, _l_data_avg: int,
                            _rotary_value: int):

@@ -11,9 +11,9 @@ from led_strip.constants import *
 NP_PIN = 0
 R_DATA_PIN = 28
 L_DATA_PIN = 27
-CLK_PIN = 13
-DT_PIN = 14
-BUTTON_PIN = 15
+CLK_PIN = 18     # yellow
+DT_PIN = 17      # green
+BUTTON_PIN = 16  # blue
 LED_PIN = 25
 
 # system ---------------------------------------------------------------------------------------------------------------
@@ -95,5 +95,6 @@ if __name__ == '__main__':
             running = False
     while data_thread_running:  # wait until second thread close
         print('waiting for second thread...')
-        time.sleep(0.1)
+        time.sleep(0.5)
     print('finish')
+

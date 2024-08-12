@@ -70,13 +70,15 @@ class LEDStrip:
                           int(self._settings.sensitivity * (NUM_OF_PIXELS // 2) * r_data_avg / 65535))
         for i in range(right_value):
             c = int(i * self._settings.max_bright / (NUM_OF_PIXELS // 2))
-            self._buffer[i] = BaseColor((c, self._settings.max_bright - c, 0)).value
+            self._buffer[i] = (c << 8) + (
+                        (self._settings.max_bright - c) << 16)  # BaseColor((c, self._settings.max_bright - c, 0)).value
         # left
         left_value = min((NUM_OF_PIXELS // 2),
                          int(self._settings.sensitivity * (NUM_OF_PIXELS // 2) * l_data_avg / 65535))
         for i in range(left_value):
             c = int(i * self._settings.max_bright / (NUM_OF_PIXELS // 2))
-            self._buffer[NUM_OF_PIXELS - 1 - i] = BaseColor((c, self._settings.max_bright - c, 0)).value
+            self._buffer[NUM_OF_PIXELS - 1 - i] = (c << 8) + (
+                        (self._settings.max_bright - c) << 16)  # BaseColor((c, self._settings.max_bright - c, 0)).value
 
     def update_sound_route(self, r_data_max: int, _r_data_avg: int, l_data_max: int, _l_data_avg: int,
                            _rotary_value: int):
@@ -105,7 +107,8 @@ class LEDStrip:
         v = NUM_OF_PIXELS * rotary_value / 100
         for i in range(int(v)):
             c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
-            self._buffer[i] = BaseColor((c, self._settings.max_bright - c, 0)).value
+            self._buffer[i] = (c << 8) + (
+                        (self._settings.max_bright - c) << 16)  # BaseColor((c, self._settings.max_bright - c, 0)).value
 
     def update_config_volume_thresh(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int,
                                     rotary_value: int):

@@ -1,4 +1,6 @@
 import time
+import machine
+# import neopixel
 from .neopio import NeoPio
 from .settings import Settings
 from .color import Color, BLACK
@@ -36,7 +38,7 @@ class LED:
 
 class LEDStrip:
     def __init__(self, pin, size, settings: Settings):
-        self._np = NeoPio(pin)
+        self._np = NeoPio(pin) #neopixel.NeoPixel(machine.Pin(pin), size, bpp=3)
         self._size = size
         self._current_leds = []
         self._color = Color()
@@ -75,6 +77,7 @@ class LEDStrip:
         for i in range(left_value):
             c = int(i * self._settings.max_bright / (NUM_OF_PIXELS//2))
             self._np[NUM_OF_PIXELS - 1 - i] = (c, self._settings.max_bright - c, 0)
+        print(left_value, right_value)
 
     def update_sound_route(self, r_data_max: int, _r_data_avg: int, l_data_max: int, _l_data_avg: int,
                            _rotary_value: int):
@@ -120,6 +123,46 @@ class LEDStrip:
 
     def reset(self):
         self._current_leds = []
+
+
+# class Color:
+#     def __init__(self, color):
+#         self._value = Color.to_bin(color)
+#
+#     @staticmethod
+#     def to_bin(color):
+#         r, g, b = color
+#         return (g << 16) + (r << 8) + (b << 0)  # color format is grb
+#
+#     @property
+#     def r(self):
+#         return (self._value % 2**16) // 2 ** 8
+#
+#     @r.setter
+#     def r(self, r):
+#         self._value += (r - self.r) << 8
+#
+#     @property
+#     def g(self):
+#         return self._value // 2**16
+#
+#     @g.setter
+#     def g(self, g):
+#         self._value += (g - self.g) << 16
+#
+#     @property
+#     def b(self):
+#         return self._value % 2**8
+#
+#     @b.setter
+#     def b(self, b):
+#         self._value += (b - self.b) << 0
+#
+#     @property
+#     def value(self):
+#         return self._value
+
+
 
 
 MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,

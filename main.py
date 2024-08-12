@@ -55,6 +55,8 @@ def main():
     settings = Settings()
     np = LEDStrip(NP_PIN, NUM_OF_PIXELS, settings)
     led = LED(LED_PIN)
+    counter = 0
+    a = time.time_ns()
     while True:
         np.clear()
         led.update()
@@ -83,6 +85,12 @@ def main():
                 settings.reset()
         np.update(r_data_max, r_data_avg, l_data_max, l_data_avg, settings.config_temp_value)
         np.write()
+        counter += 1
+        if counter % 50 == 0:
+            b = time.time_ns()
+            print(50/((b-a)/10**9))
+            a = b
+            counter = 0
 
 
 if __name__ == '__main__':
@@ -97,4 +105,3 @@ if __name__ == '__main__':
         print('waiting for second thread...')
         time.sleep(0.5)
     print('finish')
-

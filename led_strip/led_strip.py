@@ -1,7 +1,7 @@
 import time
 from .neopio import NeoPio
 from .settings import Settings
-from .color import Color, BLACK
+from .color import BaseColor, Color, BLACK
 from .constants import *
 from .settings.constants import *
 
@@ -41,7 +41,7 @@ class LEDStrip:
         self._current_leds = []
         self._color = Color()
         self._settings = settings
-        self._time = time.time_ns()
+        self._buffer = self._np.buffer
         self._counter = 1
 
     def write(self):
@@ -49,7 +49,7 @@ class LEDStrip:
 
     def clear(self):
         for i in range(NUM_OF_PIXELS):
-            self._np[i] = BLACK
+            self._buffer[i] = BLACK.value
 
     def _start(self, rtl):
         color = self._color.get(COLOR_DURATION, self._settings.max_bright)
@@ -57,7 +57,7 @@ class LEDStrip:
 
     def _draw(self):
         for led in self._current_leds:
-            self._np[led.index] = led.color
+            self._buffer[led.index] = led.color.value
         self._current_leds = [led for led in self._current_leds if led.update()]
 
     def update(self, r_data_max: int, r_data_avg: int, l_data_max: int, l_data_avg: int, rotary_value: int):
@@ -66,15 +66,17 @@ class LEDStrip:
     def update_sound_bar(self, _r_data_max: int, r_data_avg: int, _l_data_max: int, l_data_avg: int,
                          _rotary_value: int):
         # right
-        right_value = min((NUM_OF_PIXELS//2), int(self._settings.sensitivity * (NUM_OF_PIXELS//2) * r_data_avg / 65535))
+        right_value = min((NUM_OF_PIXELS // 2),
+                          int(self._settings.sensitivity * (NUM_OF_PIXELS // 2) * r_data_avg / 65535))
         for i in range(right_value):
-            c = int(i * self._settings.max_bright / (NUM_OF_PIXELS//2))
-            self._np[i] = (c, self._settings.max_bright - c, 0)
+            c = int(i * self._settings.max_bright / (NUM_OF_PIXELS // 2))
+            self._buffer[i] = BaseColor((c, self._settings.max_bright - c, 0)).value
         # left
-        left_value = min((NUM_OF_PIXELS//2), int(self._settings.sensitivity * (NUM_OF_PIXELS//2) * l_data_avg / 65535))
+        left_value = min((NUM_OF_PIXELS // 2),
+                         int(self._settings.sensitivity * (NUM_OF_PIXELS // 2) * l_data_avg / 65535))
         for i in range(left_value):
-            c = int(i * self._settings.max_bright / (NUM_OF_PIXELS//2))
-            self._np[NUM_OF_PIXELS - 1 - i] = (c, self._settings.max_bright - c, 0)
+            c = int(i * self._settings.max_bright / (NUM_OF_PIXELS // 2))
+            self._buffer[NUM_OF_PIXELS - 1 - i] = BaseColor((c, self._settings.max_bright - c, 0)).value
 
     def update_sound_route(self, r_data_max: int, _r_data_avg: int, l_data_max: int, _l_data_avg: int,
                            _rotary_value: int):
@@ -86,7 +88,7 @@ class LEDStrip:
 
     def update_random_colors(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int,
                              _rotary_value: int):
-        self.update_sound_route(2 ** 32, 0, 2**32, 0, 0)  # use max value, always triggered
+        self.update_sound_route(2 ** 32, 0, 2 ** 32, 0, 0)  # use max value, always triggered
 
     def update_config_brightness(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int,
                                  rotary_value: int):
@@ -94,15 +96,16 @@ class LEDStrip:
         v = int(255 * rotary_value / 100)
         print(rotary_value, v)
 
+        color = BaseColor((v, v, v)).value
         for i in range(NUM_OF_PIXELS):
-            self._np[i] = (v, v, v)
+            self._buffer[i] = color
 
     def update_config_sensitivity(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int,
                                   rotary_value: int):
         v = NUM_OF_PIXELS * rotary_value / 100
         for i in range(int(v)):
             c = int(i * self._settings.max_bright / NUM_OF_PIXELS)
-            self._np[i] = (c, self._settings.max_bright - c, 0)
+            self._buffer[i] = BaseColor((c, self._settings.max_bright - c, 0)).value
 
     def update_config_volume_thresh(self, _r_data_max: int, _r_data_avg: int, _l_data_max: int, _l_data_avg: int,
                                     rotary_value: int):
@@ -129,3 +132,4 @@ MODE_FUNCTION = {MODE_SOUND_BAR: LEDStrip.update_sound_bar,
                  MODE_CONFIG_SENSITIVITY: LEDStrip.update_config_sensitivity,
                  MODE_CONFIG_VOLUME_THRESH: LEDStrip.update_config_volume_thresh,
                  MODE_OFF: LEDStrip.update_off}
+

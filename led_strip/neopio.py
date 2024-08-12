@@ -25,6 +25,44 @@ def neopio_asm():
     wrap()
 
 
+# class Color:
+#     def __init__(self, color):
+#         self._value = Color.to_bin(color)
+#
+#     @staticmethod
+#     def to_bin(color):
+#         r, g, b = color
+#         return (g << 16) + (r << 8) + (b << 0)  # color format is grb
+#
+#     @property
+#     def r(self):
+#         return (self._value % 2**16) // 2 ** 8
+#
+#     @r.setter
+#     def r(self, r):
+#         self._value += (r - self.r) << 8
+#
+#     @property
+#     def g(self):
+#         return self._value // 2**16
+#
+#     @g.setter
+#     def g(self, g):
+#         self._value += (g - self.g) << 16
+#
+#     @property
+#     def b(self):
+#         return self._value % 2**8
+#
+#     @b.setter
+#     def b(self, b):
+#         self._value += (b - self.b) << 0
+#
+#     @property
+#     def value(self):
+#         return self._value
+
+
 class NeoPio:
     def __init__(self, pin):
         self._dma = DMA(NUM_OF_PIXELS)

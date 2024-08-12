@@ -6,18 +6,20 @@ from led import LED
 from led_strip import LEDStrip, Settings
 from led_strip.settings.constants import *
 from led_strip.constants import *
+from clock import Clock
 
 # gpio pins ------------------------------------------------------------------------------------------------------------
 NP_PIN = 0
 R_DATA_PIN = 28
 L_DATA_PIN = 27
-CLK_PIN = 18     # yellow
-DT_PIN = 17      # green
+CLK_PIN = 18  # yellow
+DT_PIN = 17  # green
 BUTTON_PIN = 16  # blue
 LED_PIN = 25
 
 # system ---------------------------------------------------------------------------------------------------------------
 CLOCK_SPEED = 133_000_000
+REFRESH_RATE = 30
 # ----------------------------------------------------------------------------------------------------------------------
 
 # shared data between threads ------------------------------------------------------------------------------------------
@@ -27,6 +29,8 @@ rotary = Rotary(CLK_PIN, DT_PIN, BUTTON_PIN)
 r_data = AnalogRead()
 l_data = AnalogRead()
 data_thread_running = False
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 
 
@@ -52,17 +56,7 @@ def main():
     global r_data
     global l_data
 
-    settings = Settings()
-    np = LEDStrip(NP_PIN, NUM_OF_PIXELS, settings)
-    led = LED(LED_PIN)
-    counter = 0
-    a = time.time_ns()
-    while True:
-        np.clear()
-        led.update()
-        rotary.update_button()
-        spin = rotary.spin
-        settings.config_temp_value += spin
+    def read_data():
         with lock:
             r_data_max, r_data_avg = r_data.max, r_data.avg
             r_data.reset()
@@ -83,14 +77,30 @@ def main():
                     settings.update_mode()
             elif rotary.hold_down:
                 settings.reset()
+        return r_data_max, r_data_avg, l_data_max, l_data_avg
+
+    settings = Settings()
+    np = LEDStrip(NP_PIN, NUM_OF_PIXELS, settings)
+    led = LED(LED_PIN)
+    counter = 0
+    a = time.time_ns()
+    clock = Clock(REFRESH_RATE)
+    while True:
+        np.clear()
+        led.update()
+        rotary.update_button()
+        spin = rotary.spin
+        settings.config_temp_value += spin
+        r_data_max, r_data_avg, l_data_max, l_data_avg = read_data()
         np.update(r_data_max, r_data_avg, l_data_max, l_data_avg, settings.config_temp_value)
         np.write()
         counter += 1
         if counter % 50 == 0:
             b = time.time_ns()
-            print(50/((b-a)/10**9))
+            print(50 / ((b - a) / 10 ** 9))
             a = b
             counter = 0
+        clock.tick()
 
 
 if __name__ == '__main__':

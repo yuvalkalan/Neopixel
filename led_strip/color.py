@@ -45,5 +45,5 @@ class Color:
         new_color = BaseColor([led_fade(self._color[i] * brightness,
                                         self._next_color[i] * brightness,
                                         fade_progress) for i in range(3)])
-        return new_color
+        return new_color.value
 

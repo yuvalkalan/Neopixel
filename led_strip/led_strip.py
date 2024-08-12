@@ -57,7 +57,7 @@ class LEDStrip:
 
     def _draw(self):
         for led in self._current_leds:
-            self._buffer[led.index] = led.color.value
+            self._buffer[led.index] = led.color
         self._current_leds = [led for led in self._current_leds if led.update()]
 
     def update(self, r_data_max: int, r_data_avg: int, l_data_max: int, l_data_avg: int, rotary_value: int):

@@ -8,10 +8,10 @@ class Rotary:
         self._dt = machine.Pin(pin_dt)
         self._clk_last_value = self._clk.value()
         self._spin = 0
-        self._y = Button(pin_y)
+        self._btn = Button(pin_y)
 
     def update_button(self):
-        self._y.update()
+        self._btn.update()
 
     def update(self):
         clk_state = self._clk.value()
@@ -31,20 +31,20 @@ class Rotary:
 
     @property
     def is_down(self):
-        return self._y.is_down
+        return self._btn.is_down
 
     @property
     def is_up(self):
-        return self._y.is_up
+        return self._btn.is_up
 
     @property
     def clicked(self):
-        return self._y.clicked
+        return self._btn.clicked
 
     @property
     def double_clicked(self):
-        return self._y.double_clicked
+        return self._btn.double_clicked
 
     @property
     def hold_down(self):
-        return self._y.hold_down
+        return self._btn.hold_down
